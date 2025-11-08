@@ -4,8 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient
-using System.Data
+using Microsoft.Data.SqlClient;
 namespace CarShowRoom
 {
     internal class Functions
@@ -17,16 +16,29 @@ namespace CarShowRoom
         private string ConStr;
         public Functions()
         {
-            ConStr = @"";
+            ConStr = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Suleman\Documents\CarShowRoom.mdf;Integrated Security=True;Connect Timeout=30;Encrypt=True";
             Con = new SqlConnection(ConStr);
             Cmd = new SqlCommand();
-               Cmd.Connection = Con;
+            Cmd.Connection = Con;
         }
-        public DataTable GetData(string Query) {
+        public DataTable GetData(string Query)
+        {
             dt = new DataTable();
-            Sda = new SqlDataAdapter(Query,ConStr);
+            Sda = new SqlDataAdapter(Query, ConStr);
             Sda.Fill(dt);
             return dt;
+        }
+        public int SetData(string Query)
+        {
+            int Cnt = 0;
+            if (Con.State == ConnectionState.Closed)
+            {
+                Con.Open();
+            }
+            Cmd.CommandText = Query;
+            Cnt = Cmd.ExecuteNonQuery();
+            Con.Close();
+            return Cnt;
+        }
     }
-
-}
+    }
